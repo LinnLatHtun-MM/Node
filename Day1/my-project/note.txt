@@ -1,0 +1,55 @@
+HOC Pattern => design Pattern (Reuseable) (also return UI)
+
+Higher Order Component =>use in both parent and childs 
+
+Cusomthook htae hmr ui ma swel bu
+next layout => React HoC nak yay htr dr
+
+05/09/2024 => react router dom
+Cusomthook => not eable return uI
+
+useState
+useReducer = > show hide tab
+useMemo =>
+useRab
+
+05/09/2024 => dynamic route
+
+To summarize, here are the solutions for avoiding props drilling:
+
+Context API – Use when you need to pass data or functions to deeply nested components.
+Component Composition – Structure your components to avoid unnecessary intermediate steps.
+Redux – Use for global state management, especially in larger apps.
+Custom Hooks – Encapsulate logic and state into reusable hooks.
+Render Props and HOCs – Use for reusable logic across components.
+The choice depends on the complexity of your application and the problem you are solving.
+
+1. useState:
+
+   It allows you to add state to a functional component.
+   Syntax: const [state, setState] = useState(initialValue);
+   It returns the current state value and a function to update that state.
+
+2. useEffect:
+
+   It allows you to perform side effects in functional components (e.g., fetching data, setting up subscriptions, or manually updating the DOM).
+   By default, useEffect runs after every render. You can control when it runs by passing a dependency array as the second argument.
+
+3. useContext:
+
+ It allows you to access React's context, which enables passing data deeply through the component tree without prop drilling.
+ You define a context using React.createContext and use useContext to consume it in functional components.
+
+ 4. useReducer:
+
+    It is an alternative to useState for managing complex state logic or when the state depends on previous state values.
+    It works similarly to a reducer in Redux: it takes the current state and an action, then returns the new state.
+
+ 5. useRef:
+
+     It allows you to create a reference to a DOM element or a mutable value that persists across renders but doesn’t trigger a re-render when updated.
+     It’s often used to access DOM elements or store mutable values.
+     useRef is used to focus the input element when the component mounts. The inputRef persists across renders, allowing access to the input DOM element.
+
+6. useMemo :
+   a React Hook that allows you to optimize performance by memoizing the result of expensive calculations. It only recalculates the value when one of its dependencies changes, preventing unnecessary recalculations on every render.
