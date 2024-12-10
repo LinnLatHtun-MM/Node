@@ -2,7 +2,7 @@ import * as React from 'react';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import { Box } from '@mui/material';
-import { orange, pink } from '@mui/material/colors';
+import { pink } from '@mui/material/colors';
 
 
 function handleClick(event) {
@@ -10,7 +10,7 @@ function handleClick(event) {
     console.info('You clicked a breadcrumb.');
 }
 
-export default function CustomBreadcrumbsAddtoCart({ params }) {
+export default function CustomBreadcrumbsAddToCart({ params }) {
     return (
         <div role="presentation" onClick={handleClick}>
 

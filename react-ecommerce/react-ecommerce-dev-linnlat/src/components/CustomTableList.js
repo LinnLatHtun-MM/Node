@@ -1,5 +1,3 @@
-"use client"; // Next.js use client directive
-
 import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -8,128 +6,149 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid2';
-import Image from 'next/image'; // Import Next.js Image
-import { Box } from '@mui/material';
-import Button from '@mui/material/Button'; // Corrected import
-import TextField from '@mui/material/TextField';
-import { useState } from 'react';
-import { lightGreen, green } from '@mui/material/colors';
+import Grid from '@mui/material/Grid';
+import {Box, Button, TextField} from '@mui/material';
+import {lightGreen, green} from '@mui/material/colors';
+import {useDispatch, useSelector} from 'react-redux';
+import {addToCart, decreaseQuantity} from "@/redux/features/cart/cartSlice";
 
 const TAX_RATE = 0;
 
-function ccyFormat(num) {
-    return `${num.toFixed(2)}`;
-}
+// function ccyFormat(num) {
+//     if (num)
+//         return `${num.toFixed(2)}`;
+// }
 
-function calculatePrice(qty, unit) {
-    return qty * unit;
-}
+// function calculatePrice(qty, price) {
+//     return qty * price;
+// }
 
-function createRow(id, desc, qty, unit, imageUrl) {
-    const price = calculatePrice(qty, unit);
-    return { id, desc, qty, unit, price, imageUrl };
-}
+// function createRow(id, desc, qty, unit, imageUrl) {
+//     const price = calculatePrice(qty, unit);
+//     return {id, desc, qty, unit, price, imageUrl};
+// }
 
 function subtotal(items) {
-    return items
-        .map(({ price }) => price)
-        .reduce((sum, i) => sum + i, 0);
+    return items.reduce((sum, {price}) => sum + price, 0);
 }
 
-export default function CustomTableList({ params, onTotalChange }) {
+export default function CustomTableList({onTotalChange}) {
 
-    const [cartItems, setCartItems] = useState([
+    const products = useSelector(state => state.cart.items);
 
-        createRow(1, "Bread", 0, 2, "https://demo2.pavothemes.com/freshio/wp-content/uploads/2020/08/39.jpg"),
-        createRow(2, "Milk", 0, 4, "https://demo2.pavothemes.com/freshio/wp-content/uploads/2020/08/27.jpg")
-    ]);
+    const dispatch = useDispatch();
+
+    const handleIncrease = (id) => {
+        dispatch(addToCart(id));
+    };
+
+    const handleDecrease = (id) => {
+        dispatch(decreaseQuantity(id))
+    }
+
+    // const [cartItems, setCartItems] = useState(
+    //     products.map((product) =>
+    //         createRow(product.id, product.title, product.quantity, product.price, product.images)
+    //     )
+    // );
 
     const maxCount = 100;
     const minCount = 0;
 
-    const handleCountChange = (event, id) => {
-        const newQuantity = Number(event.target.value);
+    // const handleCountChange = (event, id) => {
+    //
+    //     console.log("new add ", id);
+    //     const newQuantity = Number(event.target.value);
+    //     console.log("new newQuantity ", newQuantity);
+    //
+    //     setCartItems((prevItems) =>
+    //         prevItems.map((item) =>
+    //             item.id === id ? {...item, quantity: newQuantity, price: calculatePrice(newQuantity, item.price)} : item
+    //         )
+    //     );
+    // };
 
-        setCartItems((prevItems) =>
-            prevItems.map((item) =>
-                item.id === id ? { ...item, qty: newQuantity, price: calculatePrice(newQuantity, item.unit) } : item
-            )
-        );
-    };
 
-    // Calculate subtotal, taxes, and total
-    const invoiceSubtotal = subtotal(cartItems);
-    const invoiceTaxes = TAX_RATE * invoiceSubtotal;
-    const invoiceTotal = invoiceTaxes + invoiceSubtotal;
-
-    React.useEffect(() => {
-        onTotalChange(invoiceTotal); // Call this function whenever total changes
-    }, [invoiceTotal, onTotalChange]);
+    // const invoiceSubtotal = subtotal(cartItems);
+    // const invoiceTaxes = TAX_RATE * invoiceSubtotal;
+    // const invoiceTotal = invoiceTaxes + invoiceSubtotal;
+    //
+    // React.useEffect(() => {
+    //     onTotalChange(invoiceTotal);
+    // }, [invoiceTotal, onTotalChange]);
 
     return (
         <Box>
-            <Box sx={{ width: '100%', p: 2 }}>
+            <Box sx={{width: '100%', p: 2}}>
                 <Grid container spacing={2}>
-
-                    {cartItems.map((item) => (
-
+                    {products && products.length > 0 && products.map((item) => (
                         <React.Fragment key={item.id}>
-                            <Grid size={{ xs: 4, md: 2 }}>
+                            <Grid item xs={4} md={2}>
                                 <Box>
-                                    <Image
-                                        src={item.imageUrl}
-                                        alt={item.desc}
+                                    <img
+                                        src={item.thumbnail}
+                                        alt={item.title}
                                         width={500}
                                         height={500}
-                                        style={{ width: '100%', height: 'auto', objectFit: 'cover', paddingTop: '20px' }}
+                                        style={{width: "100%", height: "auto", objectFit: "cover"}}
                                     />
                                 </Box>
                             </Grid>
 
-                            <Grid size={{ xs: 8, md: 10 }}>
-                                <TableContainer component={Paper} sx={{ boxShadow: 'none', border: 'none' }}>
+                            <Grid item xs={8} md={10}>
+                                <TableContainer component={Paper} sx={{boxShadow: 'none', border: 'none'}}>
                                     <Table aria-label="spanning table">
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell sx={{ color: green[900], fontWeight: 700 }} align="left" colSpan={2}>
-                                                    {item.desc}
+                                                <TableCell sx={{color: green[900], fontWeight: 700}} align="left"
+                                                           colSpan={2}>
+                                                    {item.title}
                                                 </TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
                                             <TableRow>
-                                                <TableCell sx={{ color: green[800] }}>Price</TableCell>
-                                                <TableCell sx={{ color: green[900], fontWeight: 700 }}>
-                                                    {ccyFormat(item.unit)}
+                                                <TableCell sx={{color: green[800]}}>Price</TableCell>
+                                                <TableCell sx={{
+                                                    color: green[900],
+                                                    fontWeight: 700
+                                                }}>${item.price}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell sx={{color: green[900]}}>Quantity</TableCell>
+                                                {/*<TableCell sx={{color: green[900], fontWeight: 700}}>*/}
+                                                {/*    <TextField*/}
+                                                {/*        type="number"*/}
+                                                {/*        value={item.quantity}*/}
+                                                {/*        onChange={(e) => handleCountChange(e, item.id)}*/}
+                                                {/*        inputProps={{*/}
+                                                {/*            step: 1,*/}
+                                                {/*            min: minCount,*/}
+                                                {/*            max: maxCount,*/}
+                                                {/*        }}*/}
+                                                {/*        sx={{*/}
+                                                {/*            '& .MuiOutlinedInput-root': {*/}
+                                                {/*                height: '30px',*/}
+                                                {/*            },*/}
+                                                {/*            width: '60px',*/}
+                                                {/*        }}*/}
+                                                {/*    />*/}
+                                                {/*</TableCell>*/}
+                                                <TableCell sx={{color: green[900], fontWeight: 700}}>
+                                                    <button onClick={() => handleIncrease(item.id)}>+</button>
+                                                    <p>{item.quantity}</p>
+                                                </TableCell>
+                                                <TableCell sx={{color: green[900], fontWeight: 700}}>
+                                                    <button onClick={() => handleDecrease(item.id)}>-</button>
+                                                    <p>{item.quantity}</p>
                                                 </TableCell>
                                             </TableRow>
                                             <TableRow>
-                                                <TableCell sx={{ color: green[900] }}>Quantity</TableCell>
-                                                <TableCell sx={{ color: green[900], fontWeight: 700 }}>
-                                                    <TextField
-                                                        type="number"
-                                                        value={item.qty}
-                                                        onChange={(e) => handleCountChange(e, item.id)}
-                                                        inputProps={{
-                                                            step: 1,
-                                                            min: minCount,
-                                                            max: maxCount,
-                                                        }}
-                                                        sx={{
-                                                            '& .MuiOutlinedInput-root': {
-                                                                height: '30px',
-                                                            },
-                                                            width: '60px',
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell sx={{ color: green[900] }}>Item Subtotal</TableCell>
-                                                <TableCell sx={{ color: green[900], fontWeight: 700 }}>
-                                                    {ccyFormat(item.price)}
-                                                </TableCell>
+                                                <TableCell sx={{color: green[900]}}>Item Subtotal</TableCell>
+                                                <TableCell sx={{
+                                                    color: green[900],
+                                                    fontWeight: 700
+                                                }}>${subtotal(products)}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>
@@ -140,7 +159,7 @@ export default function CustomTableList({ params, onTotalChange }) {
                 </Grid>
             </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 2 }}>
+            <Box sx={{display: 'flex', justifyContent: 'center', width: '100%', mt: 2}}>
                 <Button
                     variant="contained"
                     sx={{
@@ -153,10 +172,9 @@ export default function CustomTableList({ params, onTotalChange }) {
                 </Button>
             </Box>
 
-            <br />
+            <br/>
 
-            <Grid size={{ xs: 12, md: 12 }} sx={{ border: '3px lightgray dotted' }}>
-                <br />
+            <Grid size={{xs: 12, md: 12}} sx={{border: '3px lightgray dotted'}}><br/>
                 <Box
                     sx={{
                         display: 'flex',
@@ -178,7 +196,7 @@ export default function CustomTableList({ params, onTotalChange }) {
                     />
                 </Box>
 
-                <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 2 }}>
+                <Box sx={{display: 'flex', justifyContent: 'center', width: '100%', mt: 2}}>
                     <Button
                         variant="contained"
                         sx={{
@@ -190,7 +208,7 @@ export default function CustomTableList({ params, onTotalChange }) {
                         Add Coupon
                     </Button>
                 </Box>
-                <br />
+                <br/>
             </Grid>
         </Box>
     );
